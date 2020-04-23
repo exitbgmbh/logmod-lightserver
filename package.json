@@ -1,6 +1,6 @@
 {
   "name": "logmod-lightserver",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "exitB LogMod LightServer Add-On",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
   "homepage": "https://github.com/ccarnivore/logmod-lightserver",
   "auto-updater": {
     "repo": "ccarnivore/logmod-lightserver",
-    "branch": "master"
+    "branch": "autoupdatetest"
   },
   "scripts": {
     "run-dev": "NODE_ENV=dev nodemon server.js",
