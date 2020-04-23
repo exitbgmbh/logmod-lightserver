@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "auto-updater": "^1.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "body-parser": "^1.18.3",
     "concurrently": "^3.5.0",
     "express": "^4.16.2",
