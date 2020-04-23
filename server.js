@@ -1,9 +1,13 @@
-require('dotenv').config();
 const isRoot = process.env.NODE_ENV === 'dev' ? () => {return true} : require('is-root');
+const autoUpdater = require('./autoupdate');
+
 if (!isRoot()) {
     console.log('must run as root');
     process.exit(99);
 }
+
+console.debug('calling autoupdater');
+autoUpdater.fire('check');
 
 const express = require('express');
 const app = express();

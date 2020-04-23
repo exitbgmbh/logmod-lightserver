@@ -4,18 +4,27 @@
   "description": "exitB LogMod LightServer Add-On",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ccarnivore/logmod-lightserver"
+    "url": "git+https://github.com/ccarnivore/logmod-lightserver"
   },
-  "keywords": ["exitb", "logmod", "logmodmobile", "blisstribute"],
+  "keywords": [
+    "exitb",
+    "logmod",
+    "logmodmobile",
+    "blisstribute"
+  ],
   "author": "Roman Robel (exitB GmbH)",
   "homepage": "https://github.com/ccarnivore/logmod-lightserver",
-
+  "auto-updater": {
+    "repo": "ccarnivore/logmod-lightserver",
+    "branch": "master"
+  },
   "scripts": {
     "run-dev": "NODE_ENV=dev nodemon server.js",
     "run-prod": "sudo NODE_ENV=production node server.js",
     "syncToPi": "rsync -avz --exclude=.idea --exclude=node_modules ./ pi@192.168.178.50:/home/pi/workspace/logLight"
   },
   "dependencies": {
+    "auto-updater": "^1.0.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "concurrently": "^3.5.0",
