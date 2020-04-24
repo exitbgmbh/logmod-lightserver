@@ -84,5 +84,4 @@ class BlissSocketController {
 
 }
 
-const blissSocketCtrl = new BlissSocketController();
-module.exports = blissSocketCtrl;
+module.exports = new BlissSocketController();

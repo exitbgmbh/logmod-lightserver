@@ -3,21 +3,17 @@ const colors = require('./../color');
 const fs = require('fs');
 
 const defaultConfig = {
-    blisstributeRestUrl: process.env.blisstributeRestUrl || null,
-    blisstributeRestClient: process.env.blisstributeRestClient || null,
-    blisstributeRestUser: process.env.blisstributeRestUser || null,
-    blisstributeRestPassword: process.env.blisstributeRestPassword || null,
-    numberOfLights: 10,
+    blisstributeRestUrl: null,
+    blisstributeRestClient: null,
+    blisstributeRestUser: null,
+    blisstributeRestPassword: null,
+    numberOfLights: 1,
     blinkingTimeout: 125,
     maxBrightness: 255,
     defaultBrightness: 125,
     blinkingCount: 10,
     defaultBoxSignalColor: colors.COLOR_EXITB,
-    boxConfiguration: [{
-        boxIdent: '0001',
-        boxSignalColor: colors.COLOR_EXITB,
-        lightIdCollection: [0, 1, 2, 3]
-    }]
+    boxConfiguration: []
 };
 
 class ConfigController {
@@ -30,17 +26,17 @@ class ConfigController {
         this.saveConfig();
     }
 
-    loadConfig() {
-        console.log('configCtrl::loadConfig::start');
+    constructor() {
+        console.log('configCtrl::constructor::started');
         if (!fs.existsSync(settingsFileName)) {
-            console.log('configCtrl::loadConfig::no config found');
+            console.log('configCtrl::constructor::no config found, setting default');
             this.config = defaultConfig;
             this.saveConfig();
         }
-
-        console.log('configCtrl::loadConfig::config found');
+    
+        console.log('configCtrl::constructor::file found, proceed loading');
         this.config = JSON.parse(fs.readFileSync(settingsFileName));
-        console.log('configCtrl::loadConfig::config loaded', JSON.stringify(this.config));
+        console.log('configCtrl::constructor::config loaded', JSON.stringify(this.config));
     }
 
     saveConfig() {
@@ -177,5 +173,4 @@ class ConfigController {
     }
 }
 
-const configCtrl = new ConfigController();
-module.exports = configCtrl;
+module.exports = new ConfigController();

@@ -274,5 +274,4 @@ class LightAdmin {
     }
 }
 
-const lightAdmin = new LightAdmin();
-module.exports = lightAdmin;
+module.exports = new LightAdmin();
