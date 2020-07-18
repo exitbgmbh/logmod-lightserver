@@ -134,23 +134,19 @@ class ConfigController {
 
     getBoxLightCollection(boxIdent) {
         let boxConfig = this._getBoxConfigurationForIdent(boxIdent);
-        if (!boxConfig) {
-            return [];
+        console.log('got box config', boxConfig);
+        if (!boxConfig || boxConfig.length === 0) {
+            return false;
         }
 
-        return boxConfig.lightIdCollection;
+        return boxConfig[0];
     }
 
     _getBoxConfigurationForIdent(boxIdent) {
-        let result = null;
-        this.config.boxConfiguration.forEach(function(boxConfig) {
-            if (boxConfig.boxIdent === boxIdent) {
-                result = boxConfig;
-                return false;
-            }
-        });
-
-        return result;
+        return this.config.boxConfiguration.filter(function(boxConfig) {
+            console.log(boxConfig, boxIdent);
+            return boxConfig.boxIdent === boxIdent;
+        })
     }
 
     getBlinkingCount() {

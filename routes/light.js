@@ -2,6 +2,7 @@ const router = require('express').Router({});
 const bodyParser = require('body-parser');
 const _ = require('./../helper');
 const lightController = require('./../controller/light');
+const configCtrl = require('./../controller/config');
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended: true}));
@@ -20,6 +21,22 @@ router.get('/blink', (req, res) => {
 
     console.log(lightId);
     lightController.blink(lightId);
+
+    _.requestSucceed(req, res, 'light will blink');
+});
+
+router.get('/blinkBox', (req, res) => {
+    const boxIdent = req.param('boxIdent');
+    console.log(boxIdent);
+    if (!boxIdent) {
+        _.requestFailed(req, res, 'unknown box');
+    }
+    
+    const lights = configCtrl.getBoxLightCollection(boxIdent);
+    if (lights && lights.length > 0) {
+        const boxConfig = lights[0];
+        lightController.blink(boxConfig.lightIdCollection[0], boxConfig.boxSignalColor);
+    }
 
     _.requestSucceed(req, res, 'light will blink');
 });

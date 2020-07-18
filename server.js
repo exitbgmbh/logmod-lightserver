@@ -31,3 +31,24 @@ const systemRoutes = require('./routes/system');
 app.use('/api/system', systemRoutes);
 
 app.listen(port, function() { console.log(`Listening on port ${port}`); });
+
+const lightCtrl = require('./controller/light');
+let counter = 0,
+    on = false;
+let intervalId = setInterval(function() {
+    counter++;
+    if (counter === 10) {
+        lightCtrl.clear();
+        clearInterval(intervalId);
+        return;
+    }
+    
+    if (on) {
+        lightCtrl.clear();
+        on = false;
+    } else {
+        on = true;
+        lightCtrl.full();
+    }
+}, 250);
+

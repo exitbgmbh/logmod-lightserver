@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const eventConst = require('./../event');
+const configCtrl = require('./config');
 
 class SocketEventEmitter extends EventEmitter {
     handleSocketEvent(socketMessage) {
@@ -16,7 +17,11 @@ class SocketEventEmitter extends EventEmitter {
     handlePickBoxEvent(event, eventData) {
         switch (event) {
             case eventConst.EVENT_MESSAGE_PICK_BOX_PICK:
-                this.emit(event, eventData.pickBoxIdent);
+                const lightController = require('./../controller/light');
+                const boxConfig = configCtrl.getBoxLightCollection(eventData.pickBoxIdent);
+                if (boxConfig) {
+                    lightController.blink(boxConfig.lightIdCollection[0], boxConfig.boxSignalColor);
+                }
                 break;
 
             default:
@@ -26,5 +31,4 @@ class SocketEventEmitter extends EventEmitter {
 
 }
 
-const socketEventEmitter = new SocketEventEmitter();
-module.exports = socketEventEmitter;
+module.exports = new SocketEventEmitter();
