@@ -1,14 +1,14 @@
 const hlp = require('./../helper');
 const configCtrl = require('./config');
-const colorConst = require('./../color');
+const colorConst = require('./../const').colors;
 const socketEventCtrl = require('./event');
 const eventConst = require('./../event');
+const ws281x = require('rpi-ws281x-native');
 
 class LightAdmin {
     constructor() {
-        this.ws281x = require('rpi-ws281x-native');
-        this.ws281x.init(configCtrl.getNumberOfLights(), {});
-        this.ws281x.setBrightness(configCtrl.getDefaultBrightness());
+        ws281x.init(configCtrl.getNumberOfLights(), {});
+        ws281x.setBrightness(configCtrl.getDefaultBrightness());
 
         this.lightsCollection = [];
         this.timeoutCollection = [];
@@ -58,7 +58,7 @@ class LightAdmin {
     clear() {
         this.clearTimeouts();
         for (let i = 0; i < configCtrl.getNumberOfLights(); i++) {
-            this.lightsCollection[i] = colorConst.COLOR_OFF;
+            this.lightsCollection[i] = colorConst.OFF;
         }
 
         this._render();
@@ -104,13 +104,13 @@ class LightAdmin {
         console.log('_systemInitErrorBlink', switchOn);
         if (switchOn) {
             for (let i = 0; i < configCtrl.getNumberOfLights(); i++) {
-                this.lightsCollection[i] = colorConst.COLOR_RED;
+                this.lightsCollection[i] = colorConst.RED;
             }
             this._render();
 
         } else {
             for (let i = 0; i < configCtrl.getNumberOfLights(); i++) {
-                this.lightsCollection[i] = colorConst.COLOR_OFF;
+                this.lightsCollection[i] = colorConst.OFF;
             }
             this._render();
         }
@@ -126,21 +126,21 @@ class LightAdmin {
      */
     indicateSystemInitSuccess() {
         this.clearTimeouts();
-        this._systemInitSuccess(0);
+        this._systemInitSuccess();
     }
 
     /**
      * system success indicator routine
      *
-     * @param index which light to show
      * @private
      */
-    _systemInitSuccess(index) {
+    _systemInitSuccess() {
+        
         if (this.constructor.checkIndexInRange(index)) {
             if (this.constructor.checkIndexInRange(index - 1)) {
-                this.lightsCollection[index - 1] = colorConst.COLOR_OFF;
+                this.lightsCollection[index - 1] = colorConst.OFF;
             }
-            this.lightsCollection[index] = colorConst.COLOR_GREEN;
+            this.lightsCollection[index] = colorConst.GREEN;
             this._render();
 
             setTimeout(() => {
@@ -152,7 +152,7 @@ class LightAdmin {
 
         setTimeout(() => {
             for (let i = 0; i < configCtrl.getNumberOfLights(); i++) {
-                this.lightsCollection[i] = colorConst.COLOR_OFF;
+                this.lightsCollection[i] = colorConst.OFF;
             }
             this._render();
         }, 150);
@@ -160,7 +160,7 @@ class LightAdmin {
 
     full() {
         for (let i = 0; i < configCtrl.getNumberOfLights(); i++) {
-            this.lightOn(i, colorConst.COLOR_WHITE, false);
+            this.lightOn(i, colorConst.WHITE, false);
         }
     }
 
@@ -197,7 +197,7 @@ class LightAdmin {
         if (clearOther) {
             this.clear();
         }
-        this.lightsCollection[index] = colorConst.COLOR_OFF;
+        this.lightsCollection[index] = colorConst.OFF;
         this._render();
     }
 
@@ -209,11 +209,11 @@ class LightAdmin {
      */
     toggleLight(index, color) {
         const light = this.lightsCollection[index];
-        if (light !== colorConst.COLOR_OFF) {
+        if (light !== colorConst.OFF) {
             this.lightOff(index);
             return false;
         } else {
-            this.lightOn(index, color || colorConst.COLOR_EXITB);
+            this.lightOn(index, color || colorConst.EXITB);
             return true;
         }
     }

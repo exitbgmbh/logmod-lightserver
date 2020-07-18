@@ -1,63 +1,42 @@
 const settingsFileName = './log-light.cfg.json';
-const colors = require('./../color');
+const {colors, brightness, blink, lights} = require('./../const');
 const fs = require('fs');
 
 const defaultConfig = {
-    blisstributeRestUrl: process.env.blisstributeRestUrl || null,
-    blisstributeRestClient: process.env.blisstributeRestClient || null,
-    blisstributeRestUser: process.env.blisstributeRestUser || null,
-    blisstributeRestPassword: process.env.blisstributeRestPassword || null,
-    numberOfLights: 10,
-    blinkingTimeout: 125,
-    maxBrightness: 255,
-    defaultBrightness: 125,
-    blinkingCount: 10,
-    defaultBoxSignalColor: colors.COLOR_EXITB,
-    boxConfiguration: [{
-        boxIdent: '0001',
-        boxSignalColor: colors.COLOR_EXITB,
-        lightIdCollection: [0, 1, 2, 3]
+    blisstributeRestUrl: null,
+    blisstributeRestClient: null,
+    blisstributeRestUser: null,
+    blisstributeRestPassword: null,
+    
+    blinkTimeout: blink.TIMEOUT_DEFAULT,
+    defaultBrightness: brightness.DEFAULT,
+    blinkCount: blink.COUNT_DEFAULT,
+    defaultBoxSignalColor: colors.EXITB,
+    
+    lightConfiguration: [{
+        index: 0,
+        type: lights.TYPE_STATUS,
+        identifier: 'STATUS',
+        color: colors.RED,
+        brightness: brightness.MAX
     }]
 };
 
 class ConfigController {
-    resetConfig() {
+    constructor() {
+        console.log('configCtrl::ctor::start');
         if (!fs.existsSync(settingsFileName)) {
-            return;
-        }
-
-        this.config = defaultConfig;
-        this.saveConfig();
-    }
-
-    loadConfig() {
-        console.log('configCtrl::loadConfig::start');
-        if (!fs.existsSync(settingsFileName)) {
-            console.log('configCtrl::loadConfig::no config found');
+            console.log('configCtrl::ctor::no config found');
             this.config = defaultConfig;
             this.saveConfig();
         }
-
-        console.log('configCtrl::loadConfig::config found');
+    
+        console.log('configCtrl::ctor::config found');
         this.config = JSON.parse(fs.readFileSync(settingsFileName));
-        console.log('configCtrl::loadConfig::config loaded', JSON.stringify(this.config));
+        console.log('configCtrl::ctor::config loaded', JSON.stringify(this.config));
     }
-
-    saveConfig() {
-        if (!this.config) {
-            throw 'configuration not initialized';
-        }
-
-        fs.writeFileSync(settingsFileName, JSON.stringify(this.config, null, 2));
-    }
-
-    getConfig() {
-        return this.config;
-    }
-
-    setConfig(config) {
-        this.config = config;
-    }
+    
+    /** GETTER / SETTER */
     
     getBlisstributeRestUrl() {
         return this.config.blisstributeRestUrl;
@@ -91,14 +70,6 @@ class ConfigController {
         this.config.blisstributeRestPassword = blisstributeRestPassword;
     }
 
-    getNumberOfLights() {
-        return this.config.numberOfLights;
-    }
-
-    setNumberOfLights(numberOfLights) {
-        this.config.numberOfLights = parseInt(numberOfLights);
-    }
-
     getBlinkingTimeout() {
         return this.config.blinkingTimeout;
     }
@@ -122,7 +93,64 @@ class ConfigController {
     setDefaultBrightness(defaultBrightness) {
         this.config.defaultBrightness = defaultBrightness;
     }
+    
+    getBlinkingCount() {
+        return this.config.blinkingCount;
+    }
+    
+    setBlinkingCount(blinkingCount) {
+        this.config.blinkingCount = blinkingCount;
+    }
+    
+    getNumberOfLights() {
+        return this.config.lightConfiguration.length;
+    }
+    
+    /** EO GETTER / SETTER */
 
+    isBlisstributeConfigured() {
+        return this.getBlisstributeRestUrl() &&
+            this.getBlisstributeRestClient() &&
+            this.getBlisstributeRestPassword() &&
+            this.getBlisstributeRestUser();
+    }
+    
+    isSystemConfigured() {
+        return this.config.lightConfiguration.length > 1;
+    }
+    
+    isFullyConfigured() {
+        return this.isBlisstributeConfigured() &&
+            this.isSystemConfigured();
+    }
+    
+    resetConfig() {
+        if (!fs.existsSync(settingsFileName)) {
+            return;
+        }
+        
+        this.config = defaultConfig;
+        this.saveConfig();
+    }
+    
+    saveConfig() {
+        if (!this.config) {
+            throw 'configuration not initialized';
+        }
+        
+        fs.writeFileSync(settingsFileName, JSON.stringify(this.config, null, 2), {mode: 0o777});
+    }
+    
+    getConfig() {
+        return this.config;
+    }
+    
+    getStatusLight() {
+        this.config.lightConfiguration.forEach((light) => {
+        
+        })
+    }
+    
     getBoxColor(boxIdent) {
         let boxConfig = this._getBoxConfigurationForIdent(boxIdent);
         if (!boxConfig) {
@@ -152,30 +180,6 @@ class ConfigController {
 
         return result;
     }
-
-    getBlinkingCount() {
-        return this.config.blinkingCount;
-    }
-
-    setBlinkingCount(blinkingCount) {
-        this.config.blinkingCount = blinkingCount;
-    }
-
-    setDefaultBoxSignalColor(defaultBoxSignalColor) {
-        this.config.defaultBoxSignalColor = defaultBoxSignalColor;
-    }
-
-    getDefaultBoxSignalColor() {
-        return this.config.defaultBoxSignalColor;
-    }
-
-    isBlisstributeConfigured() {
-        return this.getBlisstributeRestUrl() &&
-            this.getBlisstributeRestClient() &&
-            this.getBlisstributeRestPassword() &&
-            this.getBlisstributeRestUser();
-    }
 }
 
-const configCtrl = new ConfigController();
-module.exports = configCtrl;
+module.exports = new ConfigController();

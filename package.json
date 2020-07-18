@@ -19,7 +19,7 @@
     "branch": "master"
   },
   "scripts": {
-    "dev": "NODE_ENV=dev nodemon server.js",
+    "dev": "NODE_ENV=dev node bootstrap.js",
     "prod": "git pull && npm i && sudo NODE_ENV=production node bootstrap.js",
     "syncToPi": "rsync -avz --exclude=.idea --exclude=node_modules ./ pi@192.168.178.50:/home/pi/workspace/logLight"
   },
